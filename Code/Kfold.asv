@@ -1,4 +1,4 @@
-function avg = Kfold(k,X_data,Y_data,method,tolerance,step)
+function A = Kfold(k,X_data,Y_data,method)
 %shuffle data randomly and split the data into training and testing,
 %train model, produce averaged metrics 
 
@@ -8,10 +8,8 @@ shuffler = randperm(len);
 X_data = X_data(shuffler,:);
 Y_data = Y_data(shuffler);
 
-% size of test array
-c = (len + (k - rem(len,k)))/k;
-
-total = zeros(1,5);
+% 
+c = len + (k - rem(len,k));
 
 % train and test k times
 for i = 1:k
@@ -21,15 +19,15 @@ for i = 1:k
     Y_test = Y_data(c*(i-1)+1:len);
     
     X_train = X_data;
-    Y_train = Y_data;
+    Y_train = X_data;
     X_train(c*(i-1)+1:len,:) = [];
     Y_train(c*(i-1)+1:len) = [];
   else
-    X_test = X_data(c*(i-1)+1:c*i,:);
+    X_test = X_data(c*(i-1)+1:c*i);
     Y_test = Y_data(c*(i-1)+1:c*i);
     
     X_train = X_data;
-    Y_train = Y_data;
+    Y_train = X_data;
     X_train(c*(i-1)+1:c*i,:) = [];
     Y_train(c*(i-1)+1:c*i) = [];
   end
@@ -37,10 +35,6 @@ for i = 1:k
   % train ya model
   if method == "srpp"
     [f,p] = LinearRegressionUsingSRPP(X_train,Y_train);
-  elseif method == "richardson"
-    [f,p] = LinearRegressionUsingRichardsonMethod(X_train,Y_train,tolerance,step);
-  else
-    error("invalid method");
   end
   
   % get ya metrics
@@ -53,10 +47,9 @@ for i = 1:k
   average = mean(Y_test);
   R_sq = 1-residual/norm(Y_test-average,2)^2;
   R_sq_adj = 1-(1-R_sq)*(n-1)/(n-m-1);
-  
-  total = total + [MAE,MSE,RMSE,R_sq,R_sq_adj];
+  A = table(MAE,MSE,RMSE,R_sq,R_sq_adj);
 end
-avg = array2table(total/k, 'VariableNames',{'MAE','MSE','RMSE','R_sq','R_sq_ad'});
+
 
 
 end

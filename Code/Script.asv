@@ -44,9 +44,7 @@ Metrics(f1,X_data,Y_data)
 Metrics(f2,X_data,Y_data)
 mdl = fitlm(X_data,Y_data);
 disp(mdl);
-disp(Kfold(7,X_data,Y_data,"srpp"));
-disp(Kfold(7,X_data,Y_data,"richardson",.1,.001)); 
-% works, just takes forever
 
+Kfold(7,X_data,Y_data,"srpp");
 % disp(p1)
 % disp(p2)
