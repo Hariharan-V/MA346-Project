@@ -35,17 +35,19 @@ X_data = parkinsonsupdrs(:,{'subject','age','sex','test_time','Jitter','JitterAb
 Y_data = parkinsonsupdrs(:,{'total_UPDRS'});
 Y_data = Y_data{:,:};
 X_data = X_data{:,:};
-% size(X_data)
-[f1,p1] = LinearRegressionUsingSRPP(X_data,Y_data);
-[f2,p2] = LinearRegressionUsingRichardsonMethod(X_data, Y_data,.1,.001);
-disp(p1)
-disp(p2)
-Metrics(f1,X_data,Y_data)
-Metrics(f2,X_data,Y_data)
-mdl = fitlm(X_data,Y_data);
-disp(mdl);
-disp(Kfold(7,X_data,Y_data,"srpp"));
-disp(Kfold(7,X_data,Y_data,"richardson",.1,.001)); 
+ [f1,p1] = LinearRegressionUsingSRPP(X_data,Y_data);
+ [f2,p2] = LinearRegressionUsingRichardsonMethod(X_data, Y_data,.01,.01);
+[f3,p3] = cg(X_data, Y_data,.01);
+ [f4,p4] = SGD(X_data,Y_data,300,10,.01,1);
+[f4,p4] = SGD(X_data,Y_data,300,50,.01,1);
+ Metrics(f1,X_data,Y_data)
+ Metrics(f2,X_data,Y_data)
+ Metrics(f3,X_data,Y_data)
+Metrics(f4,X_data,Y_data)
+% mdl = fitlm(X_data,Y_data)
+% disp(mdl);
+% disp(Kfold(7,X_data,Y_data,"srpp"));
+% disp(Kfold(7,X_data,Y_data,"richardson",.1,.001)); 
 % works, just takes forever
 
 % disp(p1)

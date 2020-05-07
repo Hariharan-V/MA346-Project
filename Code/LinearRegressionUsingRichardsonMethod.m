@@ -9,15 +9,29 @@ current = zeros(m+1,1);
 T = transpose(X_data);
 A = T*X_data;
 B = T*Y_data;
-p = diag(diag(A));
-parameters = current+step*(p\(B-(A)*current));
-% % % disp(parameters)
-    while norm(B-A*parameters,2)>tolerance
+p = diag(inv(diag(diag(A))));% this is the preconditioner
+parameters = current+step*(p.*(B-(A)*current));
+%for graphing
+% y =[];
+% x = [];
+% i = 1;
+
+    while norm(current-parameters,2)>tolerance
         current = parameters;
-        parameters = current+step*(p\(B-(A)*current));
+        parameters = current+step*(p.*(B-(A)*current));
+        %for graphing
 %        disp(parameters)
-       
+%         if i % 1000
+%             y =[y norm(X_data*parameters-Y_data,2)^2/n];
+%             x = [x i];
+%         end
+%         i = i+1;
     end
+    %for graphing
+%     y =[y norm(X_data*parameters-Y_data,2)^2/n];
+%     x = [x i];
+%     plot(x,y);
+%     hold on 
 f = @(x) x*parameters(1:m)+parameters(m+1);
 end
 
