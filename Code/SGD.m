@@ -10,8 +10,8 @@ X_data = X_data(randperm(size(X_data, 1)), :);
   X_data = X_data(:,1:m+1);
 current = zeros(m+1,1);
 %for graphing
-%  X = zeros(epoch,1);
-%  Y = zeros(epoch,1);
+  X = zeros(epoch,1);
+  Y = zeros(epoch,1);
 v = zeros(m+1,1);
 for j = 1:epoch
 
@@ -22,6 +22,7 @@ for j = 1:epoch
      
        end
       %rms prop 
+      gradient = gradient/batch_size;
       v = 0.9*v+0.1*gradient.^2;
       %using rms prop, we can adjust step size for each epoch
        parameters = current - (step*((v+10e-8).^-0.5)).*(gradient);
@@ -30,16 +31,16 @@ for j = 1:epoch
        
     end
 %for graphing
-%      X(j) = j;
+      X(j) = j;
 % 
-%      Y(j) = norm(X_data*parameters-Y_data,2)^2/n;
+      Y(j) = norm(X_data*parameters-Y_data,2)^2/n;
    
 
 end
 
 %for graphing
   
-%  plot(X,Y);
+  plot(X,Y);
 
 f = @(x) x*parameters(1:m)+parameters(m+1);
 
