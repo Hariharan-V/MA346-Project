@@ -57,27 +57,29 @@ Y_data1 = Y_data1{:,:};
 [~,m] = size(X_data);
  [~,n] = size(used_vars);
  
- X_data = [X_data cos(X_data) sin(X_data) exp(1).^X_data  ];
+ X_data = [X_data cos(X_data) sin(X_data)   ];
 
 
 [~,n] = size(log_trans);
-for i = 1:n
-    col = parkinsonsupdrs(:,log_trans(i));
-    col = col{:,:};
-    X_data =[X_data log(col)./log(10) sin(log(col)./log(10)) cos(log(col)./log(10)) exp(1).^(log(col)./log(10))];
-    
-end
+ for i = 1:n
+     col = parkinsonsupdrs(:,log_trans(i));
+     col = col{:,:};
+     X_data =[X_data log(col)./log(10) sin(log(col)./log(10)) cos(log(col)./log(10)) exp(1).^(log(col)./log(10))];
+     
+ end
 
 
  
- [f,p] = LinearRegressionUsingSRPP(X_data,Y_data1);
-M = Metrics(f,X_data,Y_data1);
+   [f,p] = LinearRegressionUsingSRPP(X_data,Y_data1);
+%  [f1,p1] = LinearRegressionUsingRichardsonMethod(X_data,Y_data1,.001,.01);
+%  mdl = fitlm(X_data,Y_data1)
+ M = Metrics(f,X_data,Y_data1);
 disp("Metrics:")
 
 disp(M)
 figure(2)
 scatter([1:data_size],Y_data1-f(X_data));
 title("Residual plot for "+output);
-fprintf("Extra features engineered: cos(input) sin(input) exp(1).^input\n We also included  log(col)./log(10) sin(log(col)./log(10)) cos(log(col)./log(10)) exp(1).^(log(col)./log(10)) for the following colums\n ")
-fprintf('%s ',log_trans{:,:} );
+fprintf("Extra features engineered: cos(input) sin(input) \n We also included  log(col)./log(10) sin(log(col)./log(10)) cos(log(col)./log(10)) exp(1).^(log(col)./log(10)) for the following colums\n ")
+fprintf('%s,',log_trans{:,:} );
 fprintf("\n")
