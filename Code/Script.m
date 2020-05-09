@@ -24,7 +24,7 @@ opts.VariableTypes = ["double", "double", "double", "double", "double", "double"
 opts.ExtraColumnsRule = "ignore";
 opts.EmptyLineRule = "read";
 % Import the data
-parkinsonsupdrs = readtable(fullfile(cd, "../Data/parkinsons_updrs.csv"), opts);
+parkinsonsupdrs = readtable(fullfile(cd, "/Data/parkinsons_updrs.csv"), opts);
 
 
 %% Clear temporary variables
@@ -32,19 +32,22 @@ clear opts
 
 data = parkinsonsupdrs{:,:};
 X_data = parkinsonsupdrs(:,{'subject','age','sex','test_time','Jitter','JitterAbs','JitterRAP','JitterPPQ5','JitterDDP','Shimmer','ShimmerdB','ShimmerAPQ3','ShimmerAPQ5','ShimmerAPQ11','ShimmerDDA','NHR','HNR','RPDE','DFA','PPE'});
-Y_data = parkinsonsupdrs(:,{'total_UPDRS'});
-Y_data = Y_data{:,:};
-X_data = X_data{:,:};
- [f1,p1] = LinearRegressionUsingSRPP(X_data,Y_data);
-  [f2,p2] = LinearRegressionUsingRichardsonMethod(X_data, Y_data,.01,.01);
-[f3,p3] = cg(X_data, Y_data,.01);
- [f4,p4] = SGD(X_data,Y_data,300,50,.01,1);
+Y_data1 = parkinsonsupdrs(:,{'total_UPDRS'});
+% Y_data2 = parkinsonsupdrs(:,{'motor_UPDRS'});
 
- Metrics(f1,X_data,Y_data)
-  Metrics(f2,X_data,Y_data)
-  Metrics(f3,X_data,Y_data)
-Metrics(f4,X_data,Y_data)
- mdl = fitlm(X_data,Y_data)
+Y_data1 = Y_data1{:,:};
+X_data = X_data{:,:};
+ [f1,p1] = LinearRegressionUsingSRPP(X_data,Y_data1);
+  [f2,p2,loss2] = LinearRegressionUsingRichardsonMethod(X_data, Y_data1,.01,.01);
+ [f3,p3,loss3] = cg(X_data, Y_data1,.01);
+  [f4,p4,loss4] = SGD(X_data,Y_data1,300,50,.01);
+
+ Metrics(f1,X_data,Y_data1)
+   Metrics(f2,X_data,Y_data1)
+   Metrics(f3,X_data,Y_data1)
+ Metrics(f4,X_data,Y_data1)
+  mdl = fitlm(X_data,Y_data1)
+% scatter([1:5875],Y_data1-f1(X_data))
 % disp(mdl);
 % disp(Kfold(7,X_data,Y_data,"srpp"));
 % disp(Kfold(7,X_data,Y_data,"richardson",.1,.001)); 
